@@ -2,10 +2,8 @@
 
 **Technologies used:** Flask(Python backend), Html, JavaScript
 
-[Repository link](https://github.com/msiddhu/interview_portal)
-
-[Application](https://msiddhu.github.io/interview_portal/)
-
+[Repository](https://github.com/msiddhu/interview_portal)<br>
+[Application](https://msiddhu.github.io/interview_portal/)<br>
 [Flask API](https://interviewbackend45.herokuapp.com)
 
 
@@ -19,6 +17,8 @@
 
 ### Database Schema:
 ![Interview Table schema](interview_schema.png)
+
+
 Person and Interview table have a **many-to-many** relationship.
 
 
