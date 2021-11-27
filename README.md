@@ -25,5 +25,6 @@ Person and Interview table have a **many-to-many** relationship.
 **Todos:**
 
 1. Resume Upload 
+1. Make javascript modular
 1. Create participants
 1. Delete feature
