@@ -1,2 +1,0 @@
-from .ViewController import listing_resources
-from .InterviewController import interview_resources
