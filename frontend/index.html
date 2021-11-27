@@ -4,8 +4,12 @@
 
         <title>
                 Interview Creation Portal
-
         </title>
+        <style>        
+            body {
+            background-color: #E6E6FA;
+}
+          </style>
         <script src="index.js"></script>
     </head>
     <header>
@@ -13,15 +17,16 @@
         <br>
        <button class="btn btn-success" onclick="getPersons()">View persons</button>
        <button class="btn btn-success" onclick="getInterviews()">View Interviews</button>
-       <button class="btn btn-success" onclick="createInterviewButton()">Create interview</button>
+       <button class="btn btn-success" onclick="createInterviewForm()">Create interview</button>
         </center>
     </header>
     <body >
         <center> 
-            
+
             
         <h3 id="heading" style="color: darkorange;"></h3>
-        <b><h4 id="count" style="color:magenta;"></h4></b>
+        <b><h4 id="pagetitle" style="color:darkcyan"></h4></b>
+        <b><h4 id="interview_id" style="color:magenta;"></h4></b>
         
 
         <div id="interviewbody">

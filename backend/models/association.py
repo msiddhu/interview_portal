@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column,ForeignKey, String
 
 from exts import db
 from models.Interview import Interview

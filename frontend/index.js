@@ -1,6 +1,3 @@
-
-
-
 function getPersons(){
         var request=new XMLHttpRequest();
         let url='http://127.0.0.1:5000/list/persons'
@@ -8,15 +5,16 @@ function getPersons(){
         request.open('GET',url,true);
         request.send();
         request.onload=function(){
-                document.getElementById("viewTable").innerHTML=""
+                clearAll();
                 var res=JSON.parse(this.response);
                 res=res.data;
-                
+                console.log(res);
                 let table=document.createElement("table");
-                table.cellPadding="15"
+                table.cellPadding="30"
+                table.cellSpacing="20"
                 table.align="center";
-                table.border="1";
-                table.className="table-striped table-hover"
+                 table.border="1.5";
+                table.className="table table-lg"
                 let row=table.insertRow(-1)
                 row.style.color="blue"
                 row.style.backgroundColor="lightcoral"
@@ -26,8 +24,8 @@ function getPersons(){
 
                 email.style.width="100%"
                 name.style.width="30%" 
-                email.innerHTML="Email ID"
-                name.innerHTML="Person Name"
+                email.innerHTML="Person Name"
+                name.innerHTML="Email Id"
 
                 res.forEach(element => {
                         let row1=table.insertRow(-1);
@@ -40,16 +38,12 @@ function getPersons(){
                         name1.style.width="30%" 
                         email1.innerHTML=element.email;
                         name1.innerHTML=element.name;
-
                 });
                 tab=document.getElementById("viewTable")
                 tab.append(table);
+                document.getElementById('pagetitle').innerHTML="Participants"
         }
-
 }
-
-
-
 
 function getInterviews(){
         var request=new XMLHttpRequest();
@@ -58,8 +52,7 @@ function getInterviews(){
         request.open('GET',url,true);
         request.send();
         request.onload=function(){
-                document.getElementById("viewTable").innerHTML=""
-                document.getElementById("interviewbody").innerHTML=""
+                clearAll();
                 var res=JSON.parse(this.response);
                 res=res.data;
                 console.log(res);
@@ -67,9 +60,9 @@ function getInterviews(){
                 table.cellPadding="15"
                 table.align="center";
                 table.border="1";
-                // table.className="table-responsive-sm table-hover"
+                table.className="table table-lg"
                 let row=table.insertRow(-1)
-                row.style.color="blue"
+                row.style.color="black"
                 row.style.backgroundColor="lightcoral"
                 row.align="center";
 
@@ -100,65 +93,155 @@ function getInterviews(){
                         let start_time1=row1.insertCell(-1);
                         let end_time1=row1.insertCell(-1);
                         let participants1=row1.insertCell(-1);
-                        let edit_interview1=row1.in
+                        let edit_interview1=row1.insertCell(-1);
 
-                        
-                        start_time1.innerHTML=element.email;
-                        end_time1.innerHTML=element.name;
-                        participants1.innerHTML=element.participants.toString();
-                        edit_interview.innerHTML=element.interview_id;
+                        start_time1.innerHTML=element.start;
+                        end_time1.innerHTML=element.end;
+                        var parti_string="";
+                        element.participants.forEach(parti=>{
+                                console.log(parti.name);
+                                parti_string=parti_string+"  "+parti.name;
+                                console.log(parti_string);
+                        });
+                        participants1.innerHTML=parti_string;
+                        editButton=document.createElement("button");
+                        editButton.setAttribute("type","button");
+                        editButton.setAttribute("id","editbutton");
+                        editButton.setAttribute("name"," Edit Button");
+                        buttontextnode=document.createTextNode("Edit");
+                        editButton.appendChild(buttontextnode);
+                        editButton.setAttribute("value",element.interview_id);
+                        editButton.setAttribute("onclick","editInterviewForm()");
+
+                        edit_interview1.appendChild(editButton);
                 }
                 );
                 tab=document.getElementById("viewTable")
                 tab.append(table);
-        }
-
+                document.getElementById('pagetitle').innerHTML="Upcoming interviews"
+        }          
 }
 
-async function getAllUsers(){
-        var request=new XMLHttpRequest();
-        let url='http://127.0.0.1:5000/list/persons';
-        console.log(url)
-        request.open('GET',url,true);
-        request.send();
-        var result;
-        request.onload=function(){
-                var res=JSON.parse(this.response);
-                result=res.data;
-                console.log(result);
-        }
-        return result;
+function editInterviewForm(){
+        var interview_id=document.getElementById('editbutton').value;
+        console.log(interview_id);
+        clearAll();
+        const url = "http://127.0.0.1:5000/list/interview/"+interview_id;
+        fetch(url, {
+                method : "GET",
+            }).then(
+                res => {
+                       
+                        return res.json()
+                }
+            ).then((response)=>{
+                    var data=JSON.stringify(response);
+                    var jsondata=JSON.parse(data).data;
+                    console.log(jsondata);
 
+                    var form = document.createElement("form");
+                    form.setAttribute('id','form1');
+
+                    var end=jsondata.end;
+                    var start=jsondata.start;
+                    var person1=jsondata.participants[0].email;
+                    var person2=jsondata.participants[1].email;
+                    var startTime=createHtmlObject("input","datetime-local","start_time","start","","",start);
+                    var endTime=createHtmlObject("input","datetime-local","end_time","end","","",end);
+                    var dropdown1=createHtmlObject("select","","persons_list1","person1","width:150px","",person1);        
+                    var dropdown2=createHtmlObject("select","","persons_list2","person2","width:150px","" ,person2);
+
+                    var request=new XMLHttpRequest();
+                    let url='http://127.0.0.1:5000/list/persons'
+                    console.log(url)
+                    request.open('GET',url,true);
+                    request.send();
+                    request.onload=function(){
+                            var res=JSON.parse(this.response);
+                            var data=res.data;
+                            console.log(res);
+            
+                            data.forEach(element=>{
+            
+                                    var option1=document.createElement("option");
+                                    textnode1=document.createTextNode(element.name);
+                                    option1.setAttribute('value',element.email);
+                                    option1.setAttribute("text",element.name);
+                                    if(person1==element.email){
+                                            option1.setAttribute("selected",true);
+                                    }
+                                    option1.appendChild(textnode1);
+                                    dropdown1.appendChild(option1);
+            
+                                    var option2=document.createElement("option");
+                                    textnode2=document.createTextNode(element.name);
+                                    option2.setAttribute('value',element.email);
+                                    option2.setAttribute("text",element.name);
+                                    if(person2==element.email){
+                                        option2.setAttribute("selected",true);
+                                        }
+                                    option2.appendChild(textnode2);
+                                    dropdown2.appendChild(option2);
+                            })
+                          
+            
+                    }
+                                  
+                    var submit=document.createElement("button");
+                    submit.setAttribute("type","button");
+                    buttontextnode=document.createTextNode("Edit Interview");
+                    submit.appendChild(buttontextnode);
+                    submit.setAttribute("value","Submit");
+                    submit.setAttribute("onclick","editInterview()");
+            
+                    var br = document.createElement("br"); 
+                    var h5=document.createElement("h5");
+                starttext=h5.cloneNode();
+                endtext=h5.cloneNode();
+                person1text=h5.cloneNode();
+                person2text=h5.cloneNode();
+                
+                starttext.innerHTML="Start Time";
+                endtext.innerHTML="End Time";
+                person1text.innerHTML="Participant 1";
+                person2text.innerHTML="Participant 2";
+
+                    form.appendChild(starttext);
+                    form.appendChild(startTime);
+                    form.appendChild(br);
+
+                    form.appendChild(endtext);
+                    form.appendChild(endTime);   
+                    form.appendChild(br.cloneNode());
+
+                    form.appendChild(person1text);
+                    form.appendChild(dropdown1);
+                    form.appendChild(br.cloneNode());
+                    
+                    form.appendChild(person2text);
+                    form.appendChild(dropdown2);
+                    form.appendChild(br.cloneNode());
+                    form.appendChild(br.cloneNode()); 
+                    
+                    form.appendChild(submit);
+                    form.appendChild(br.cloneNode());
+                    document.getElementById('interview_id').innerHTML="Interivew id:"+ interview_id;
+                    document.getElementById('interview_id').value=interview_id;
+                    document.getElementById('interviewbody').appendChild(form); 
+                    document.getElementById('pagetitle').innerHTML="Edit the interview"                
+            }
+            );
 }
 
-async function createInterviewButton(){
-
+function createInterviewForm(){
+        clearAll();
         var form = document.createElement("form");
         form.setAttribute('id','form1');
         
-
-        var startTime = document.createElement("input");
-        startTime.setAttribute("type", "datetime-local");
-        startTime.setAttribute("id", "start_time");
-        startTime.setAttribute("name", "start");
-
-
-        var endTime = document.createElement("input");
-        endTime.setAttribute("type", "datetime-local");
-        endTime.setAttribute("id", "end_time");
-        endTime.setAttribute("name", "end");
-
-        var dropdown1 =document.createElement("select");
-        dropdown1.setAttribute("style","width:100px");
-        dropdown1.setAttribute("name","person1");
-        dropdown1.setAttribute("id","persons_list1");
-        
-
-        var dropdown2 =document.createElement("select");
-        dropdown2.setAttribute("style","width:100px");
-        dropdown2.setAttribute("name","person2");
-        dropdown2.setAttribute("id","persons_list2");
-        
+        var startTime=createHtmlObject("input","datetime-local","start_time","start");
+        var endTime=createHtmlObject("input","datetime-local","end_time","end");
+        var dropdown1=createHtmlObject("select","","persons_list1","person1","width:100px");        
+        var dropdown2=createHtmlObject("select","","persons_list2","person2","width:100px");
 
         var request=new XMLHttpRequest();
         let url='http://127.0.0.1:5000/list/persons'
@@ -169,11 +252,8 @@ async function createInterviewButton(){
                 var res=JSON.parse(this.response);
                 var data=res.data;
                 console.log(res);
-        
-
 
                 data.forEach(element=>{
-
                         var option1=document.createElement("option");
                         textnode1=document.createTextNode(element.name);
                         option1.setAttribute('value',element.email);
@@ -188,68 +268,120 @@ async function createInterviewButton(){
                         option2.appendChild(textnode2);
                         dropdown2.appendChild(option2);
                 })
-              
-
         }
-                      
+            
         var submit=document.createElement("button");
         submit.setAttribute("type","button");
+        buttontextnode=document.createTextNode("Create Interview");
+        submit.appendChild(buttontextnode);
         submit.setAttribute("value","Submit");
         submit.setAttribute("onclick","createInterview()");
 
+        var br = document.createElement("br");         
+        var h5=document.createElement("h5");
 
-        var br = document.createElement("br"); 
-
-        form.appendChild(startTime);
-        form.appendChild(br);
-
-        form.appendChild(endTime);
-        form.appendChild(br.cloneNode());
+        starttext=h5.cloneNode();
+        endtext=h5.cloneNode();
+        person1text=h5.cloneNode();
+        person2text=h5.cloneNode();
         
-        form.appendChild(dropdown1);
-        form.appendChild(br.cloneNode());
-
-
-        form.appendChild(dropdown2);
-        form.appendChild(br.cloneNode());
+        starttext.innerHTML="Start Time";
+        endtext.innerHTML="End Time";
+        person1text.innerHTML="Participant 1";
+        person2text.innerHTML="Participant 2";
         
-        form.appendChild(submit);
-        form.appendChild(br.cloneNode());
+            form.appendChild(starttext);
+            form.appendChild(startTime);
+            form.appendChild(br);
 
+            form.appendChild(endtext);
+            form.appendChild(endTime);   
+            form.appendChild(br.cloneNode());
+          
+            form.appendChild(person1text);
+            form.appendChild(dropdown1);
+            form.appendChild(br.cloneNode());
+            
+            form.appendChild(person2text);
+            form.appendChild(dropdown2);
+            form.appendChild(br.cloneNode());
+            form.appendChild(br.cloneNode()); 
+
+            form.appendChild(submit);
+        form.appendChild(br.cloneNode());
         document.getElementById('interviewbody').appendChild(form); 
+        document.getElementById('pagetitle').innerHTML="Schedule the interview"
 
 }
 
 
+function editInterview(){
+        const url = "http://127.0.0.1:5000/interview/edit";
+        object=getFormData();
+        interview_id=document.getElementById('interview_id').value;
+        object['interview_id']=interview_id;
+        console.log(interview_id);
+        var body = JSON.stringify(object);
+
+         fetch(url, {
+                method : "POST",
+                contentType:'application/json',
+                body: body,
+                })
+                .then(response => res=response.json())
+                .then(
+                        res => {console.log(res.data);
+                        var msg=res.data.message;
+                        alert(msg);
+}
+);
+}
+
 function createInterview(){
-        // const form = document.querySelector('form');
-        // const data = Object.fromEntries(new FormData(form).entries());
-        // console.log(data);
-        // console.log('heelo');
-
-        // var request=new XMLHttpRequest();
-        // let url='http://127.0.0.1:5000/interview/create';
-        // request.
-        // request.open('GET',url,true);
-
-
         const url = "http://127.0.0.1:5000/interview/create";
-        formData=new FormData(document.getElementById("form1"));
+        object=getFormData();
+        var body = JSON.stringify(object);
+        console.log(body);
+        fetch(url, {
+                    method : "POST",
+                        contentType:'application/json',
+                        body: body
+                                })
+                        .then(response => res=response.json())
+                        .then(
+                                res => {console.log(res.data);
+                                        var msg=res.data.message;
+                                        alert(msg);
+                                }
+                                );
 
+
+}
+
+function getFormData(){
+        formData=new FormData(document.getElementById("form1"));
         var object = {};
         formData.forEach((value, key) => object[key] = value);
-        var gh = JSON.stringify(object);
-        console.log(gh);
-        fetch(url, {
-    method : "POST",
-    contentType:'application/json',
-    body: gh,
-}).then(
-    response => response.text() // .json(), etc.
-    // same as function(response) {return response.text();}
-).then(
-    html => console.log(html)
-);
+        return object
 
+}
+
+function createHtmlObject(element,type,id,name,style=" ",defaul=10,value=""){
+        var element= document.createElement(element);
+        element.setAttribute("type",type);
+        element.setAttribute("style",style);
+        element.setAttribute("default",defaul);
+        element.setAttribute("id",id);
+        element.setAttribute("name",name);
+        element.setAttribute("value",value);
+        return element;
+}
+
+
+function clearAll(){
+        document.getElementById("viewTable").innerHTML=""
+        document.getElementById("interviewbody").innerHTML=""
+        document.getElementById('interview_id').innerHTML=""
+        document.getElementById('pagetitle').innerHTML=""
 
 }

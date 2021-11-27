@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 from exts import db
-from models.association import schedules
+from models.Association import schedules
 
 
 class Person(db.Model):
@@ -13,5 +13,5 @@ class Person(db.Model):
 
     @classmethod
     def get_all(cls):
-        tmp=db.session.query(Person).all().to_dict()
-        return tmp
+        data=db.session.query(Person).all().to_dict()
+        return data

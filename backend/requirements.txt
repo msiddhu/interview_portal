@@ -1,6 +1,9 @@
-Flask~=2.0.2
 Flask-SQLAlchemy
 Jinja2
 gunicorn
 SQLAlchemy
 Werkzeug
+SQLAlchemy
+Flask-Cors
+Flask
+
