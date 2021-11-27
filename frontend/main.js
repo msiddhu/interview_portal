@@ -1,6 +1,12 @@
+//the idea was to make modules and seperate the functions.
+
+const devurl='http://127.0.0.1:5000'
+const produrl='https://interviewbackend45.herokuapp.com/'
+let baseurl=produrl;
+
 function getPersons(){
         var request=new XMLHttpRequest();
-        let url='http://127.0.0.1:5000/list/persons'
+        let url=baseurl+'/list/persons'
         console.log(url)
         request.open('GET',url,true);
         request.send();
@@ -47,7 +53,7 @@ function getPersons(){
 
 function getInterviews(){
         var request=new XMLHttpRequest();
-        let url='http://127.0.0.1:5000/list/interviews'
+        let url=baseurl+'/list/interviews'
         console.log(url)
         request.open('GET',url,true);
         request.send();
@@ -57,7 +63,7 @@ function getInterviews(){
                 res=res.data;
                 console.log(res);
                 let table=document.createElement("table");
-                table.cellPadding="15"
+                table.cellPadding="10"
                 table.align="center";
                 table.border="1";
                 table.className="table table-lg"
@@ -73,10 +79,10 @@ function getInterviews(){
                 let edit_interview=row.insertCell(-1);
 
 
-                start_time.style.width="100%"
-                end_time.style.width="100%" 
-                participants.style.width="100%" 
-                edit_interview.style.width="100%" 
+                start_time.style.width="30%"
+                end_time.style.width="30%" 
+                participants.style.width="50%" 
+                edit_interview.style.width="30%" 
 
 
                 start_time.innerHTML="Start Time";
@@ -100,7 +106,7 @@ function getInterviews(){
                         var parti_string="";
                         element.participants.forEach(parti=>{
                                 console.log(parti.name);
-                                parti_string=parti_string+"  "+parti.name;
+                                parti_string=parti_string+parti.name+"<br>";
                                 console.log(parti_string);
                         });
                         participants1.innerHTML=parti_string;
@@ -126,7 +132,7 @@ function editInterviewForm(){
         var interview_id=document.getElementById('editbutton').value;
         console.log(interview_id);
         clearAll();
-        const url = "http://127.0.0.1:5000/list/interview/"+interview_id;
+        const url = baseurl+'/list/interview/'+interview_id;
         fetch(url, {
                 method : "GET",
             }).then(
@@ -152,7 +158,7 @@ function editInterviewForm(){
                     var dropdown2=createHtmlObject("select","","persons_list2","person2","width:150px","" ,person2);
 
                     var request=new XMLHttpRequest();
-                    let url='http://127.0.0.1:5000/list/persons'
+                    let url=baseurl+'/list/persons'
                     console.log(url)
                     request.open('GET',url,true);
                     request.send();
@@ -244,7 +250,7 @@ function createInterviewForm(){
         var dropdown2=createHtmlObject("select","","persons_list2","person2","width:100px");
 
         var request=new XMLHttpRequest();
-        let url='http://127.0.0.1:5000/list/persons'
+        let url=baseurl+'/list/persons'
         console.log(url)
         request.open('GET',url,true);
         request.send();
@@ -314,9 +320,36 @@ function createInterviewForm(){
 
 }
 
+function getFormData(){
+        formData=new FormData(document.getElementById("form1"));
+        var object = {};
+        formData.forEach((value, key) => object[key] = value);
+        return object
+
+}
+
+function createHtmlObject(element,type,id,name,style=" ",defaul=10,value=""){
+        var element= document.createElement(element);
+        element.setAttribute("type",type);
+        element.setAttribute("style",style);
+        element.setAttribute("default",defaul);
+        element.setAttribute("id",id);
+        element.setAttribute("name",name);
+        element.setAttribute("value",value);
+        return element;
+}
+
+function clearAll(){
+        document.getElementById("viewTable").innerHTML=""
+        document.getElementById("interviewbody").innerHTML=""
+        document.getElementById('interview_id').innerHTML=""
+        document.getElementById('pagetitle').innerHTML=""
+
+}
+
 
 function editInterview(){
-        const url = "http://127.0.0.1:5000/interview/edit";
+        const url = baseurl+'/interview/edit';
         object=getFormData();
         interview_id=document.getElementById('interview_id').value;
         object['interview_id']=interview_id;
@@ -338,7 +371,7 @@ function editInterview(){
 }
 
 function createInterview(){
-        const url = "http://127.0.0.1:5000/interview/create";
+        const url = baseurl+'/interview/create';
         object=getFormData();
         var body = JSON.stringify(object);
         console.log(body);
@@ -355,33 +388,5 @@ function createInterview(){
                                 }
                                 );
 
-
-}
-
-function getFormData(){
-        formData=new FormData(document.getElementById("form1"));
-        var object = {};
-        formData.forEach((value, key) => object[key] = value);
-        return object
-
-}
-
-function createHtmlObject(element,type,id,name,style=" ",defaul=10,value=""){
-        var element= document.createElement(element);
-        element.setAttribute("type",type);
-        element.setAttribute("style",style);
-        element.setAttribute("default",defaul);
-        element.setAttribute("id",id);
-        element.setAttribute("name",name);
-        element.setAttribute("value",value);
-        return element;
-}
-
-
-function clearAll(){
-        document.getElementById("viewTable").innerHTML=""
-        document.getElementById("interviewbody").innerHTML=""
-        document.getElementById('interview_id').innerHTML=""
-        document.getElementById('pagetitle').innerHTML=""
 
 }
