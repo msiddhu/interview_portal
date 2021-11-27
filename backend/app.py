@@ -1,9 +1,10 @@
+import datetime
 
 from flask_cors import CORS
 from controllers import interview_resources,listing_resources
-from exts import db
-from libs import get_utc_now
+from exts import db, APIResponse
 from flask import jsonify,Flask
+from libs.Exceptions import ScheduleError, ParticipantsError
 from models import init_all
 
 
@@ -32,15 +33,15 @@ def ready():
     init_all()
     response = jsonify({
         'status': 'ready',
-        'time': get_utc_now()
+        'time': datetime.datetime.now()
     })
     return response
 
 
-# @app.errorhandler(Exception)
-# def handle_error(err):
-#     if isinstance(err, ScheduleError) or isinstance(err, ParticipantsError):
-#         return APIResponse.respond({"message": err.message}, err.status_code)
-#
-#     else:
-#         return APIResponse.respond({"message": "Internal server error"}, 503)
+@app.errorhandler(Exception)
+def handle_error(err):
+    if isinstance(err, ScheduleError) or isinstance(err, ParticipantsError):
+        return APIResponse.respond({"message": err.message}, err.status_code)
+
+    else:
+        return APIResponse.respond({"message": "Internal server error"}, 503)
