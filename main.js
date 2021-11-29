@@ -117,8 +117,7 @@ function getInterviews(){
                         buttontextnode=document.createTextNode("Edit");
                         editButton.appendChild(buttontextnode);
                         editButton.setAttribute("value",element.interview_id);
-                        editButton.setAttribute("onclick","editInterviewForm()");
-
+                        editButton.setAttribute("onclick","editInterviewForm('"+element.interview_id+"')");
                         edit_interview1.appendChild(editButton);
                 }
                 );
@@ -128,9 +127,9 @@ function getInterviews(){
         }          
 }
 
-function editInterviewForm(){
-        var interview_id=document.getElementById('editbutton').value;
-        console.log(interview_id);
+function editInterviewForm(interview_id){
+       // var interview_id=document.getElementById('editbutton').value; 
+       console.log(interview_id);
         clearAll();
         const url = baseurl+'/list/interview/'+interview_id;
         fetch(url, {
