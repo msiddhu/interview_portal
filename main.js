@@ -77,18 +77,21 @@ function getInterviews(){
                 let end_time=row.insertCell(-1)
                 let participants=row.insertCell(-1)
                 let edit_interview=row.insertCell(-1);
+                let delete_interview=row.insertCell(-1);
 
 
                 start_time.style.width="30%"
                 end_time.style.width="30%" 
                 participants.style.width="50%" 
                 edit_interview.style.width="30%" 
+                delete_interview.style.width="30%" 
 
 
                 start_time.innerHTML="Start Time";
                 end_time.innerHTML="End Time";
                 participants.innerHTML="Participants List";
                 edit_interview.innerHTML="Edit Interview";
+                delete_interview.innerHTML="Delete Interview";
 
 
                 res.forEach(element => {
@@ -100,6 +103,7 @@ function getInterviews(){
                         let end_time1=row1.insertCell(-1);
                         let participants1=row1.insertCell(-1);
                         let edit_interview1=row1.insertCell(-1);
+                        let delete_interview1=row1.insertCell(-1);
 
                         start_time1.innerHTML=element.start;
                         end_time1.innerHTML=element.end;
@@ -119,6 +123,17 @@ function getInterviews(){
                         editButton.setAttribute("value",element.interview_id);
                         editButton.setAttribute("onclick","editInterviewForm('"+element.interview_id+"')");
                         edit_interview1.appendChild(editButton);
+
+                        deleteButton=document.createElement("button");
+                        deleteButton.setAttribute("type","button");
+                        deleteButton.setAttribute("id","deletebutton");
+                        deleteButton.setAttribute("name","Delete Button");
+                        deletebuttontextnode=document.createTextNode("Delete");
+                        deleteButton.appendChild(deletebuttontextnode);
+                        deleteButton.setAttribute("onclick","deleteInterview('"+element.interview_id+"')");
+                        delete_interview1.appendChild(deleteButton);
+
+
                 }
                 );
                 tab=document.getElementById("viewTable")
@@ -345,7 +360,18 @@ function clearAll(){
         document.getElementById('pagetitle').innerHTML=""
 
 }
+function deleteInterview(interview_id){
+        const url = baseurl+'/interview/delete/'+interview_id;
+        fetch(url,{
+                method:"POST",
+        }).then(response=>res=response.json()).then(
+                res=>{console.log(res.data)
+                        alert(res.data.message);
+                        getInterviews();
+                }
+        );
 
+}
 
 function editInterview(){
         const url = baseurl+'/interview/edit';
